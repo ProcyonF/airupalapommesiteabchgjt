@@ -17,7 +17,6 @@ export default function Navigation() {
     { name: 'Accueil', href: '/' },
     { name: 'Projets', href: '/projects' },
     { name: 'Compétences', href: '/skills' },
-    { name: 'Contact', href: '/contact' },
   ]
 
   useEffect(() => {
@@ -53,10 +52,10 @@ export default function Navigation() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm font-medium transition-colors hover:text-primary-600 ${
+                className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 ${
                   pathname === item.href
-                    ? 'text-primary-600'
-                    : 'text-secondary-600'
+                    ? 'bg-white text-primary-600 shadow-lg'
+                    : 'text-white hover:bg-white/20'
                 }`}
               >
                 {item.name}
@@ -65,10 +64,10 @@ export default function Navigation() {
             {user && user.uid === ADMIN_ID && (
               <Link
                 href="/dashboard"
-                className={`text-sm font-medium transition-colors hover:text-primary-600 ${
+                className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 ${
                   pathname === '/dashboard'
-                    ? 'text-primary-600'
-                    : 'text-secondary-600'
+                    ? 'bg-white text-primary-600 shadow-lg'
+                    : 'text-white hover:bg-white/20'
                 }`}
               >
                 Dashboard
@@ -78,13 +77,13 @@ export default function Navigation() {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-secondary-600 hover:text-primary-600 transition-colors"
+                  className="text-sm font-medium px-4 py-2 rounded-full text-white hover:bg-white/20 transition-all duration-300"
                 >
                   Connexion
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 transition-colors"
+                  className="text-sm font-medium px-4 py-2 rounded-full bg-white text-primary-600 hover:bg-white/90 transition-all duration-300 shadow-lg"
                 >
                   Inscription
                 </Link>
@@ -93,7 +92,7 @@ export default function Navigation() {
               <div className="relative">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="flex items-center space-x-2 text-sm text-secondary-600 hover:text-primary-600 transition-colors"
+                  className="flex items-center space-x-2 text-sm font-medium px-4 py-2 rounded-full text-white hover:bg-white/20 transition-all duration-300"
                 >
                   <span>{user.email}</span>
                   <svg

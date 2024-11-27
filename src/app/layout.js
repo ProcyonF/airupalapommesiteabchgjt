@@ -26,14 +26,14 @@ export default function RootLayout({ children }) {
     <html lang="fr" className={`${inter.variable} ${poppins.variable}`}>
       <body className="bg-secondary-50 text-secondary-900 antialiased">
         <AuthContextProvider>
-          <div className="flex min-h-screen flex-col">
+          <div className="flex min-h-screen flex-col animated-background">
             <Navigation />
             <main className="flex-grow">
               {children}
             </main>
-            <footer className="bg-white border-t border-secondary-200">
+            <footer className="bg-white/10 backdrop-blur-md border-t border-white/20">
               <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                <p className="text-center text-secondary-500 text-sm">
+                <p className="text-center text-white text-sm">
                   {new Date().getFullYear()} Airupalapomme. Tous droits réservés.
                 </p>
               </div>

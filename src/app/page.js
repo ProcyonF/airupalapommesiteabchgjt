@@ -1,28 +1,72 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { getProjects } from '../firebase/projects'
+import { useAuth } from '../firebase/auth'
 
 export default function Home() {
+  const [projects, setProjects] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    // Vérifier l'état de l'authentification
+    useAuth((currentUser) => {
+      setUser(currentUser)
+    })
+  }, [])
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      if (!user) {
+        setLoading(false)
+        return
+      }
+
+      try {
+        const projectsData = await getProjects()
+        setProjects(projectsData)
+      } catch (err) {
+        console.error('Erreur lors du chargement des projets:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadProjects()
+  }, [user])
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900 to-primary-950 opacity-90 z-0"></div>
-        <div className="absolute inset-0 bg-[url('/images/grid.svg')] opacity-10 z-0"></div>
+        <div className="absolute inset-0 hero-overlay"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-fade-in">
             Airupalapomme
           </h1>
-          <p className="text-xl sm:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto animate-fade-in">
+          <p className="text-xl sm:text-2xl text-white mb-8 max-w-3xl mx-auto animate-fade-in">
             Développeur Web Passionné par la Création d'Expériences Numériques Innovantes
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="#projects" className="btn btn-primary">
-              Voir mes projets
-            </a>
-            <a href="#contact" className="btn btn-secondary">
-              Me contacter
-            </a>
+            {user ? (
+              <a 
+                href="#projects" 
+                className="px-8 py-3 bg-white text-primary-600 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
+              >
+                Voir mes projets
+              </a>
+            ) : (
+              <Link
+                href="/login"
+                className="px-8 py-3 bg-white text-primary-600 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
+              >
+                Se connecter pour voir les projets
+              </Link>
+            )}
           </div>
         </div>
 
@@ -34,7 +78,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-white">
+      <section id="about" className="py-20 content-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-secondary-900 mb-4">
@@ -46,8 +90,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <p className="text-lg text-secondary-600">
-                Passionné par le développement web depuis plus de 5 ans, je crée des expériences numériques uniques et innovantes.
-                Ma spécialité ? Transformer des idées complexes en interfaces intuitives et élégantes.
+                Passionné par le développement web, je me spécialise dans la création de sites web modernes et performants.
+                Mon engagement dans une formation continue sur les technologies du web et de l'IA me permet d'offrir des solutions toujours plus innovantes.
               </p>
               <p className="text-lg text-secondary-600">
                 Je travaille principalement avec React, Next.js et Node.js, mais j'aime explorer de nouvelles technologies
@@ -80,139 +124,71 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-20 bg-secondary-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-secondary-900 mb-4">
-              Mes Projets
-            </h2>
-            <div className="w-20 h-1 bg-primary-600 mx-auto"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Project Card 1 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <div className="aspect-w-16 aspect-h-9 bg-secondary-100"></div>
-              <div className="p-6">
-                <h3 className="font-bold text-xl mb-2 text-secondary-900">Projet 1</h3>
-                <p className="text-secondary-600 mb-4">
-                  Description du projet 1. Une brève explication de ce que fait le projet
-                  et des technologies utilisées.
-                </p>
-                <div className="flex gap-2">
-                  <span className="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">
-                    React
-                  </span>
-                  <span className="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">
-                    Next.js
-                  </span>
-                </div>
-              </div>
+      {user ? (
+        <section id="projects" className="py-20 content-section">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl sm:text-4xl font-bold text-secondary-900 mb-4">
+                Mes Projets
+              </h2>
+              <div className="w-20 h-1 bg-primary-600 mx-auto"></div>
             </div>
 
-            {/* Project Card 2 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <div className="aspect-w-16 aspect-h-9 bg-secondary-100"></div>
-              <div className="p-6">
-                <h3 className="font-bold text-xl mb-2 text-secondary-900">Projet 2</h3>
-                <p className="text-secondary-600 mb-4">
-                  Description du projet 2. Une brève explication de ce que fait le projet
-                  et des technologies utilisées.
-                </p>
-                <div className="flex gap-2">
-                  <span className="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">
-                    Node.js
-                  </span>
-                  <span className="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">
-                    Express
-                  </span>
-                </div>
+            {loading ? (
+              <p className="text-center text-secondary-600">Chargement des projets...</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {projects.map((project) => (
+                  <div key={project.id} className="bg-white/10 backdrop-blur-md rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-200 border border-white/20">
+                    {project.imageUrl && (
+                      <div className="relative aspect-w-16 aspect-h-9">
+                        <Image
+                          src={project.imageUrl}
+                          alt={project.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <h3 className="font-bold text-xl mb-2 text-white">{project.title}</h3>
+                      <p className="text-gray-300 mb-4">{project.description}</p>
+                      {project.link && (
+                        <Link
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block px-4 py-2 bg-white text-primary-600 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
+                        >
+                          Voir le projet
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
+            )}
+          </div>
+        </section>
+      ) : (
+        <section id="projects" className="py-20 content-section">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white/10 backdrop-blur-md rounded-lg p-8 text-center border border-white/20">
+              <h2 className="text-3xl font-bold mb-4 text-white">Accès Restreint</h2>
+              <p className="text-xl text-gray-300 mb-6">
+                Les projets sont uniquement accessibles aux utilisateurs connectés.
+              </p>
+              <Link
+                href="/login"
+                className="inline-block px-6 py-3 bg-white text-primary-600 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
+              >
+                Se connecter
+              </Link>
             </div>
-
-            {/* Project Card 3 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <div className="aspect-w-16 aspect-h-9 bg-secondary-100"></div>
-              <div className="p-6">
-                <h3 className="font-bold text-xl mb-2 text-secondary-900">Projet 3</h3>
-                <p className="text-secondary-600 mb-4">
-                  Description du projet 3. Une brève explication de ce que fait le projet
-                  et des technologies utilisées.
-                </p>
-                <div className="flex gap-2">
-                  <span className="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">
-                    Firebase
-                  </span>
-                  <span className="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">
-                    React
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-secondary-900 mb-4">
-              Me Contacter
-            </h2>
-            <div className="w-20 h-1 bg-primary-600 mx-auto"></div>
-          </div>
-
-          <div className="max-w-xl mx-auto">
-            <form className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-secondary-700">
-                  Nom
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  className="mt-1 block w-full rounded-md border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-secondary-700">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  className="mt-1 block w-full rounded-md border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-secondary-700">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={4}
-                  className="mt-1 block w-full rounded-md border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                ></textarea>
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  className="w-full btn btn-primary"
-                >
-                  Envoyer
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }

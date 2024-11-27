@@ -1,16 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '../../context/AuthContext'
+import { auth } from '../../firebase/config'
+import { onAuthStateChanged } from 'firebase/auth'
 import { getProjects, addProject, deleteProject } from '../../firebase/projects'
 
 export default function Dashboard() {
-  const router = useRouter()
-  const { user } = useAuth()
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [currentUser, setCurrentUser] = useState(null)
   const [newProject, setNewProject] = useState({
     title: '',
     description: '',
@@ -21,25 +20,27 @@ export default function Dashboard() {
   const ADMIN_ID = "Mpr84ccCpsZyfzZ5AApyZFcHN7W2"
 
   useEffect(() => {
-    if (user?.uid !== ADMIN_ID) {
-      router.push('/')
-      return
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user)
+      setLoading(false)
 
-    const loadProjects = async () => {
-      try {
-        const projectsData = await getProjects()
-        setProjects(projectsData)
-      } catch (error) {
-        console.error('Erreur lors du chargement des projets:', error)
-        setError('Erreur lors du chargement des projets')
-      } finally {
-        setLoading(false)
+      if (user?.uid === ADMIN_ID) {
+        loadProjects()
       }
-    }
+    })
 
-    loadProjects()
-  }, [user, router])
+    return () => unsubscribe()
+  }, [])
+
+  const loadProjects = async () => {
+    try {
+      const projectsData = await getProjects()
+      setProjects(projectsData)
+    } catch (error) {
+      console.error('Erreur lors du chargement des projets:', error)
+      setError('Erreur lors du chargement des projets')
+    }
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -85,70 +86,74 @@ export default function Dashboard() {
   }
 
   if (loading) {
-    return <div className="p-4">Chargement...</div>
+    return <div className="p-4 text-white">Chargement...</div>
+  }
+
+  if (!currentUser || currentUser.uid !== ADMIN_ID) {
+    return <div className="p-4 text-white">Accès non autorisé</div>
   }
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-4 text-white">Dashboard</h1>
       
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-400/10 border border-red-400 text-red-400 px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleAddProject} className="mb-8 space-y-4">
+      <form onSubmit={handleAddProject} className="mb-8 space-y-4 bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
         <div>
-          <label className="block text-sm font-medium mb-1">Titre</label>
+          <label className="block text-sm font-medium mb-1 text-white">Titre</label>
           <input
             type="text"
             name="title"
             value={newProject.title}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
             required
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
+          <label className="block text-sm font-medium mb-1 text-white">Description</label>
           <textarea
             name="description"
             value={newProject.description}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
             required
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium mb-1">URL de l'image</label>
+          <label className="block text-sm font-medium mb-1 text-white">URL de l'image</label>
           <input
             type="url"
             name="imageUrl"
             value={newProject.imageUrl}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
             required
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium mb-1">Lien du projet</label>
+          <label className="block text-sm font-medium mb-1 text-white">Lien du projet</label>
           <input
             type="url"
             name="link"
             value={newProject.link}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-white/5 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-white/50 focus:border-transparent"
             required
           />
         </div>
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="w-full px-4 py-2 bg-white text-primary-600 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
         >
           Ajouter le projet
         </button>
@@ -156,22 +161,22 @@ export default function Dashboard() {
 
       <div className="space-y-4">
         {projects.map(project => (
-          <div key={project.id} className="border p-4 rounded">
-            <h3 className="text-xl font-semibold">{project.title}</h3>
-            <p className="text-gray-600">{project.description}</p>
+          <div key={project.id} className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20">
+            <h3 className="text-xl font-semibold text-white">{project.title}</h3>
+            <p className="text-gray-300">{project.description}</p>
             <div className="mt-2">
               <a
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
+                className="text-blue-300 hover:text-blue-400 transition-colors"
               >
                 Voir le projet
               </a>
             </div>
             <button
               onClick={() => handleDeleteProject(project.id)}
-              className="mt-2 text-red-500 hover:text-red-700"
+              className="mt-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-full hover:bg-red-500/30 transition-all"
             >
               Supprimer
             </button>
