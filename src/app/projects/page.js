@@ -4,26 +4,21 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getProjects } from '../../firebase/projects'
-import { useAuth } from '../../firebase/auth'
+import { useAuth } from '../../context/AuthContext'
 
 export default function Projects() {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [user, setUser] = useState(null)
-
-  useEffect(() => {
-    // Vérifier l'état de l'authentification
-    useAuth((currentUser) => {
-      setUser(currentUser)
-      setLoading(false)
-    })
-  }, [])
+  const { user } = useAuth()
 
   useEffect(() => {
     // Charger les projets seulement si l'utilisateur est connecté
     const loadProjects = async () => {
-      if (!user) return
+      if (!user) {
+        setLoading(false)
+        return
+      }
       
       try {
         const projectsData = await getProjects()
@@ -31,6 +26,8 @@ export default function Projects() {
       } catch (err) {
         console.error('Erreur lors du chargement des projets:', err)
         setError('Impossible de charger les projets')
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -39,9 +36,9 @@ export default function Projects() {
 
   if (loading) {
     return (
-      <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
+      <main className="min-h-screen py-20 bg-gradient-to-b from-black/60 to-black/30 dark:from-black/80 dark:to-black/60">
         <div className="max-w-7xl mx-auto px-6">
-          <p className="text-gray-900 dark:text-gray-200">Chargement...</p>
+          <p className="text-white dark:text-gray-200">Chargement...</p>
         </div>
       </main>
     )
@@ -49,20 +46,20 @@ export default function Projects() {
 
   if (!user) {
     return (
-      <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center shadow-lg">
-            <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Accès Restreint</h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
-              Les projets sont uniquement accessibles aux utilisateurs connectés.
-            </p>
-            <Link
-              href="/login"
-              className="inline-block px-6 py-3 bg-primary-600 text-white dark:bg-primary-500 rounded-lg font-semibold hover:bg-primary-700 dark:hover:bg-primary-600 transition-all"
-            >
-              Se connecter
-            </Link>
-          </div>
+      <main className="min-h-screen py-20 bg-gradient-to-b from-black/60 to-black/30 dark:from-black/80 dark:to-black/60">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h1 className="text-3xl font-bold text-white dark:text-white mb-4">
+            Accès Restreint
+          </h1>
+          <p className="text-gray-200 dark:text-gray-300 mb-8">
+            Veuillez vous connecter pour voir les projets
+          </p>
+          <Link 
+            href="/login"
+            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Se connecter
+          </Link>
         </div>
       </main>
     )
@@ -70,22 +67,24 @@ export default function Projects() {
 
   if (error) {
     return (
-      <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
+      <main className="min-h-screen py-20 bg-gradient-to-b from-black/60 to-black/30 dark:from-black/80 dark:to-black/60">
         <div className="max-w-7xl mx-auto px-6">
-          <p className="text-red-600 dark:text-red-400">{error}</p>
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            {error}
+          </div>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
+    <main className="min-h-screen py-20 bg-gradient-to-b from-black/60 to-black/30 dark:from-black/80 dark:to-black/60">
       <div className="max-w-7xl mx-auto px-6">
-        <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white text-center">Mes Projets</h1>
+        <h1 className="text-3xl font-bold text-white dark:text-white mb-8">Mes Projets</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.length === 0 ? (
-            <p className="text-gray-600 dark:text-gray-400">Aucun projet n'a été trouvé.</p>
+            <p className="text-gray-200 dark:text-gray-300">Aucun projet n'a été trouvé.</p>
           ) : (
             projects.map((project) => (
               <article 

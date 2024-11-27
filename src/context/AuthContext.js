@@ -44,8 +44,20 @@ export const AuthContextProvider = ({ children }) => {
         return userCredential;
     };
 
-    const login = (email, password) => {
-        return signInWithEmailAndPassword(auth, email, password);
+    const login = async (email, password) => {
+        try {
+            console.log('AuthContext: Tentative de connexion')
+            const result = await signInWithEmailAndPassword(auth, email, password)
+            console.log('AuthContext: Connexion réussie', result.user.uid)
+            return result
+        } catch (error) {
+            console.error('AuthContext: Erreur de connexion', {
+                code: error.code,
+                message: error.message,
+                fullError: error
+            })
+            throw error
+        }
     };
 
     const logout = async () => {

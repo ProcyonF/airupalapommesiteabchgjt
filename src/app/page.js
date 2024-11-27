@@ -42,12 +42,20 @@ export default function Home() {
           </p>
           <div className="flex justify-center space-x-4">
             {user ? (
-              <a 
-                href="#projects"
-                className="px-8 py-3 bg-white dark:bg-gray-800 text-primary-600 dark:text-primary-400 rounded-full font-semibold hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
-              >
-                Voir mes projets
-              </a>
+              <div className="flex space-x-4">
+                <a 
+                  href="#projects"
+                  className="px-8 py-3 bg-white dark:bg-gray-800 text-primary-600 dark:text-primary-400 rounded-full font-semibold hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
+                >
+                  Voir mes projets
+                </a>
+                <Link 
+                  href="/ai"
+                  className="px-8 py-3 bg-white dark:bg-gray-800 text-primary-600 dark:text-primary-400 rounded-full font-semibold hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
+                >
+                  Intelligence Artificielle
+                </Link>
+              </div>
             ) : (
               <Link
                 href="/login"
@@ -142,14 +150,14 @@ export default function Home() {
                       </div>
                     )}
                     <div className="p-6">
-                      <h3 className="font-bold text-xl mb-2 text-white dark:text-white">{project.title}</h3>
-                      <p className="text-gray-300 dark:text-gray-400 mb-4">{project.description}</p>
+                      <h3 className="font-bold text-xl mb-2 text-gray-900 dark:text-white">{project.title}</h3>
+                      <p className="text-gray-700 dark:text-gray-400 mb-4">{project.description}</p>
                       {project.link && (
                         <Link
                           href={project.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-block px-4 py-2 bg-white dark:bg-gray-800 text-primary-600 dark:text-primary-400 rounded-full font-semibold hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
+                          className="inline-block px-4 py-2 bg-primary-600 dark:bg-gray-800 text-white dark:text-primary-400 rounded-full font-semibold hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
                         >
                           Voir le projet
                         </Link>

@@ -18,6 +18,7 @@ export default function Navigation() {
     { name: 'Accueil', href: '/' },
     { name: 'Projets', href: '/projects' },
     { name: 'Compétences', href: '/skills' },
+    { name: 'Intelligence Artificielle', href: '/ai' },
   ]
 
   useEffect(() => {
