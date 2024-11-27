@@ -2,12 +2,15 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { 
-    onAuthStateChanged,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    sendEmailVerification,
-    updateProfile
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  updatePassword as firebaseUpdatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  sendEmailVerification,
+  updateProfile
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
 
@@ -50,8 +53,21 @@ export const AuthContextProvider = ({ children }) => {
         await signOut(auth);
     };
 
+    const updatePassword = async (currentPassword, newPassword) => {
+        try {
+            const credential = EmailAuthProvider.credential(
+                user.email,
+                currentPassword
+            )
+            await reauthenticateWithCredential(user, credential)
+            await firebaseUpdatePassword(user, newPassword)
+        } catch (error) {
+            throw error
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, signup, login, logout }}>
+        <AuthContext.Provider value={{ user, signup, login, logout, updatePassword }}>
             {!loading && children}
         </AuthContext.Provider>
     );

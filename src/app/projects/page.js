@@ -39,9 +39,9 @@ export default function Projects() {
 
   if (loading) {
     return (
-      <main className="min-h-screen py-20">
+      <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-6">
-          <p className="text-white">Chargement...</p>
+          <p className="text-gray-900 dark:text-gray-200">Chargement...</p>
         </div>
       </main>
     )
@@ -49,16 +49,16 @@ export default function Projects() {
 
   if (!user) {
     return (
-      <main className="min-h-screen py-20">
+      <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-white/10 backdrop-blur-md rounded-lg p-8 text-center border border-white/20">
-            <h1 className="text-3xl font-bold mb-4 text-white">Accès Restreint</h1>
-            <p className="text-xl text-gray-300 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center shadow-lg">
+            <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Accès Restreint</h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
               Les projets sont uniquement accessibles aux utilisateurs connectés.
             </p>
             <Link
               href="/login"
-              className="inline-block px-6 py-3 bg-white text-primary-600 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
+              className="inline-block px-6 py-3 bg-primary-600 text-white dark:bg-primary-500 rounded-lg font-semibold hover:bg-primary-700 dark:hover:bg-primary-600 transition-all"
             >
               Se connecter
             </Link>
@@ -70,27 +70,30 @@ export default function Projects() {
 
   if (error) {
     return (
-      <main className="min-h-screen py-20">
+      <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-6">
-          <p className="text-red-400">{error}</p>
+          <p className="text-red-600 dark:text-red-400">{error}</p>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen py-20">
+    <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-6">
-        <h1 className="text-4xl font-bold mb-8 text-white text-center">Mes Projets</h1>
+        <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white text-center">Mes Projets</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.length === 0 ? (
-            <p className="text-white">Aucun projet n'a été trouvé.</p>
+            <p className="text-gray-600 dark:text-gray-400">Aucun projet n'a été trouvé.</p>
           ) : (
             projects.map((project) => (
-              <article key={project.id} className="bg-white/10 backdrop-blur-md rounded-lg shadow-xl p-6 hover:shadow-2xl transition-shadow duration-200 border border-white/20">
+              <article 
+                key={project.id} 
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden"
+              >
                 {project.imageUrl && (
-                  <div className="relative h-48 mb-4 overflow-hidden rounded-lg bg-gray-100">
+                  <div className="relative h-48 w-full overflow-hidden">
                     <Image
                       src={project.imageUrl}
                       alt={project.title}
@@ -103,20 +106,37 @@ export default function Projects() {
                     />
                   </div>
                 )}
-                
-                <h3 className="text-xl font-semibold mb-2 text-white">{project.title}</h3>
-                <p className="text-gray-300 mb-4">{project.description}</p>
-                
-                {project.link && (
-                  <Link
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block px-4 py-2 bg-white text-primary-600 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg"
-                  >
-                    Voir le projet
-                  </Link>
-                )}
+                <div className="p-6">
+                  <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                    {project.title}
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.technologies?.map((tech, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 text-sm rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  {project.link && (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+                    >
+                      Voir le projet
+                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
               </article>
             ))
           )}

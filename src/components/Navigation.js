@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '../context/AuthContext'
 import { usePathname } from 'next/navigation'
+import ThemeToggle from './ThemeToggle'
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -27,97 +28,75 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const handleLogout = async () => {
-    try {
-      await logout()
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error)
-    }
-  }
-
   return (
-    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm' : 'bg-transparent'}`}>
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="font-heading font-bold text-xl text-primary-600">
-              Airupalapomme
-            </span>
-          </Link>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${
+      scrolled ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <div className="flex-shrink-0 flex items-center">
+              <Link href="/" className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                Airupalapomme
+              </Link>
+            </div>
+          </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-8">
-            {navigation.slice(0, 3).map((item) => (
+          {/* Navigation desktop */}
+          <div className="hidden md:flex md:items-center md:space-x-4">
+            {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 ${
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   pathname === item.href
-                    ? 'bg-white text-primary-600 shadow-lg'
-                    : 'text-white hover:bg-white/20'
+                    ? 'text-primary-600 dark:text-primary-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
               >
                 {item.name}
               </Link>
             ))}
-            {user && user.uid === ADMIN_ID && (
-              <Link
-                href="/dashboard"
-                className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 ${
-                  pathname === '/dashboard'
-                    ? 'bg-white text-primary-600 shadow-lg'
-                    : 'text-white hover:bg-white/20'
-                }`}
-              >
-                Dashboard
-              </Link>
-            )}
-            {!user ? (
-              <div className="flex items-center space-x-4">
-                <Link
-                  href="/login"
-                  className="text-sm font-medium px-4 py-2 rounded-full text-white hover:bg-white/20 transition-all duration-300"
-                >
-                  Connexion
-                </Link>
-                <Link
-                  href="/signup"
-                  className="text-sm font-medium px-4 py-2 rounded-full bg-white text-primary-600 hover:bg-white/90 transition-all duration-300 shadow-lg"
-                >
-                  Inscription
-                </Link>
-              </div>
-            ) : (
+            
+            <ThemeToggle />
+
+            {user ? (
               <div className="relative">
                 <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="flex items-center space-x-2 text-sm font-medium px-4 py-2 rounded-full text-white hover:bg-white/20 transition-all duration-300"
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
                 >
                   <span>{user.email}</span>
-                  <svg
-                    className={`h-5 w-5 transform transition-transform ${isMenuOpen ? 'rotate-180' : ''}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
-                {/* Menu déroulant */}
-                {isMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
                     <div className="py-1">
+                      {user.uid === ADMIN_ID && (
+                        <Link
+                          href="/dashboard"
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          Dashboard
+                        </Link>
+                      )}
                       <Link
-                        href="/profile/change-password"
-                        className="block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100"
+                        href="/change-password"
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={() => setUserMenuOpen(false)}
                       >
                         Modifier le mot de passe
                       </Link>
                       <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100"
+                        onClick={() => {
+                          logout()
+                          setUserMenuOpen(false)
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         Déconnexion
                       </button>
@@ -125,102 +104,122 @@ export default function Navigation() {
                   </div>
                 )}
               </div>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/login"
+                  className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                >
+                  Connexion
+                </Link>
+                <Link
+                  href="/signup"
+                  className="px-4 py-2 rounded-md text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
+                >
+                  Inscription
+                </Link>
+              </div>
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-secondary-600 hover:text-primary-600 hover:bg-secondary-100 transition-colors"
-          >
-            <span className="sr-only">Ouvrir le menu</span>
-            {!isMenuOpen ? (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          {/* Bouton menu mobile */}
+          <div className="flex md:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              <svg
+                className={`${isMenuOpen ? 'hidden' : 'block'} h-6 w-6`}
+                stroke="currentColor"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
-            ) : (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                className={`${isMenuOpen ? 'block' : 'hidden'} h-6 w-6`}
+                stroke="currentColor"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            )}
-          </button>
+            </button>
+          </div>
         </div>
+      </div>
 
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigation.slice(0, 3).map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    pathname === item.href
-                      ? 'text-primary-600 bg-primary-50'
-                      : 'text-secondary-600 hover:text-primary-600 hover:bg-secondary-50'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              {user && user.uid === ADMIN_ID && (
+      {/* Menu mobile */}
+      <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden bg-white dark:bg-gray-900 shadow-lg`}>
+        <div className="px-2 pt-2 pb-3 space-y-1">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                pathname === item.href
+                  ? 'text-primary-600 dark:text-primary-400'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.name}
+            </Link>
+          ))}
+          
+          {user ? (
+            <>
+              <div className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">{user.email}</div>
+              {user.uid === ADMIN_ID && (
                 <Link
                   href="/dashboard"
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    pathname === '/dashboard'
-                      ? 'text-primary-600 bg-primary-50'
-                      : 'text-secondary-600 hover:text-primary-600 hover:bg-secondary-50'
-                  }`}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Dashboard
                 </Link>
               )}
-              {!user ? (
-                <div className="space-y-1 pt-4">
-                  <Link
-                    href="/login"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-secondary-600 hover:text-primary-600 hover:bg-secondary-50 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Connexion
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Inscription
-                  </Link>
-                </div>
-              ) : (
-                <div className="border-t border-secondary-200 pt-4 mt-4">
-                  <div className="px-3 py-2 text-base font-medium text-secondary-600">
-                    {user.email}
-                  </div>
-                  <Link
-                    href="/profile/change-password"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-secondary-600 hover:text-primary-600 hover:bg-secondary-50"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Modifier le mot de passe
-                  </Link>
-                  <button
-                    onClick={() => {
-                      handleLogout()
-                      setIsMenuOpen(false)
-                    }}
-                    className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-secondary-600 hover:text-primary-600 hover:bg-secondary-50"
-                  >
-                    Déconnexion
-                  </button>
-                </div>
-              )}
-            </div>
+              <Link
+                href="/change-password"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Modifier le mot de passe
+              </Link>
+              <button
+                onClick={() => {
+                  logout()
+                  setIsMenuOpen(false)
+                }}
+                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+              >
+                Déconnexion
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Connexion
+              </Link>
+              <Link
+                href="/signup"
+                className="block px-3 py-2 rounded-md text-base font-medium bg-primary-600 text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Inscription
+              </Link>
+            </>
+          )}
+          
+          <div className="px-3 py-2">
+            <ThemeToggle />
           </div>
-        )}
-      </nav>
-    </header>
+        </div>
+      </div>
+    </nav>
   )
 }

@@ -1,102 +1,127 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+import { useAuth } from '../../firebase/auth'
+
 const skills = {
   frontend: [
-    { name: "HTML/CSS", level: 35 },
-    { name: "JavaScript", level: 30 },
-    { name: "React/Next.js", level: 20 },
-    { name: "TailwindCSS", level: 15 },
+    { name: 'HTML5', level: 90 },
+    { name: 'CSS3/SCSS', level: 85 },
+    { name: 'JavaScript (ES6+)', level: 85 },
+    { name: 'React.js', level: 80 },
+    { name: 'Next.js', level: 75 },
+    { name: 'Tailwind CSS', level: 85 },
   ],
   backend: [
-    { name: "Python", level: 40 },
-    { name: "Node.js", level: 25 },
-    { name: "SQL/NoSQL", level: 20 },
-    { name: "API REST", level: 15 },
+    { name: 'Node.js', level: 75 },
+    { name: 'Express.js', level: 70 },
+    { name: 'Python', level: 80 },
+    { name: 'Django', level: 70 },
+    { name: 'Firebase', level: 75 },
   ],
   tools: [
-    { name: "Git/GitHub", level: 35 },
-    { name: "VS Code", level: 30 },
-    { name: "Docker", level: 20 },
-    { name: "CI/CD", level: 15 },
+    { name: 'Git', level: 85 },
+    { name: 'VS Code', level: 90 },
+    { name: 'Docker', level: 65 },
+    { name: 'Figma', level: 70 },
   ],
-  softSkills: [
-    "Travail d'équipe",
-    "Communication",
-    "Résolution de problèmes",
-    "Autonomie",
-    "Veille technologique",
-    "Gestion de projet",
-  ]
-}
-
-function SkillBar({ name, level }) {
-  return (
-    <div className="mb-6">
-      <div className="flex justify-between mb-2">
-        <span className="text-white font-medium">{name}</span>
-        <span className="text-white/80">{level}%</span>
-      </div>
-      <div className="w-full bg-white/10 rounded-full h-3 backdrop-blur-sm">
-        <div
-          className="h-3 rounded-full transition-all duration-500 relative overflow-hidden bg-gradient-to-r from-white/80 to-white"
-          style={{ width: `${level}%` }}
-        >
-          <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-        </div>
-      </div>
-    </div>
-  )
 }
 
 export default function Skills() {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    useAuth((currentUser) => {
+      setUser(currentUser)
+      setLoading(false)
+    })
+  }, [])
+
+  if (loading) {
+    return (
+      <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-6">
+          <p className="text-gray-900 dark:text-gray-200">Chargement...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (!user) {
+    return (
+      <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center shadow-lg">
+            <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
+              Accès Restreint
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
+              Les compétences sont uniquement accessibles aux utilisateurs connectés.
+            </p>
+            <a
+              href="/login"
+              className="inline-block px-6 py-3 bg-primary-600 text-white dark:bg-primary-500 rounded-lg font-semibold hover:bg-primary-700 dark:hover:bg-primary-600 transition-all"
+            >
+              Se connecter
+            </a>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  const SkillBar = ({ name, level }) => (
+    <div className="mb-6">
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{name}</span>
+        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{level}%</span>
+      </div>
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+        <div
+          className="bg-primary-600 dark:bg-primary-500 h-2.5 rounded-full transition-all duration-500"
+          style={{ width: `${level}%` }}
+        ></div>
+      </div>
+    </div>
+  )
+
   return (
-    <main className="min-h-screen py-20">
-      <div className="max-w-6xl mx-auto px-6">
-        <h1 className="text-4xl font-bold mb-12 text-white text-center">Compétences</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {/* Technical Skills */}
-          <div>
-            <section className="mb-12 bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20">
-              <h2 className="text-2xl font-semibold mb-6 text-white">Frontend</h2>
-              {skills.frontend.map((skill, index) => (
-                <SkillBar key={index} {...skill} />
-              ))}
-              <div className="mt-4 text-sm text-white/60 text-center">Total: 100%</div>
-            </section>
+    <main className="min-h-screen py-20 bg-white dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-6">
+        <h1 className="text-4xl font-bold mb-12 text-gray-900 dark:text-white text-center">
+          Mes Compétences
+        </h1>
 
-            <section className="mb-12 bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20">
-              <h2 className="text-2xl font-semibold mb-6 text-white">Backend</h2>
-              {skills.backend.map((skill, index) => (
-                <SkillBar key={index} {...skill} />
-              ))}
-              <div className="mt-4 text-sm text-white/60 text-center">Total: 100%</div>
-            </section>
-
-            <section className="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20">
-              <h2 className="text-2xl font-semibold mb-6 text-white">Outils</h2>
-              {skills.tools.map((skill, index) => (
-                <SkillBar key={index} {...skill} />
-              ))}
-              <div className="mt-4 text-sm text-white/60 text-center">Total: 100%</div>
-            </section>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Frontend Skills */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
+              Frontend
+            </h2>
+            {skills.frontend.map((skill) => (
+              <SkillBar key={skill.name} {...skill} />
+            ))}
           </div>
 
-          {/* Soft Skills */}
-          <div>
-            <section className="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20">
-              <h2 className="text-2xl font-semibold mb-6 text-white">Soft Skills</h2>
-              <div className="grid grid-cols-2 gap-4">
-                {skills.softSkills.map((skill, index) => (
-                  <div
-                    key={index}
-                    className="p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 text-white hover:bg-white/10 transition-all duration-300"
-                  >
-                    <span>{skill}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
+          {/* Backend Skills */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
+              Backend
+            </h2>
+            {skills.backend.map((skill) => (
+              <SkillBar key={skill.name} {...skill} />
+            ))}
+          </div>
+
+          {/* Tools & Others */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
+              Outils & Autres
+            </h2>
+            {skills.tools.map((skill) => (
+              <SkillBar key={skill.name} {...skill} />
+            ))}
           </div>
         </div>
       </div>
