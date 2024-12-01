@@ -3,13 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAc4jmeVVQEBsi3ql1SWoobK-Zqof3MXmY",
-  authDomain: "social-video-downloader-1d30b.firebaseapp.com",
-  projectId: "social-video-downloader-1d30b",
-  storageBucket: "social-video-downloader-1d30b.appspot.com",
-  messagingSenderId: "365847602700",
-  appId: "1:365847602700:web:dcac5646b716b9e95cf029",
-  measurementId: "G-N7DVBWZ2F9"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase

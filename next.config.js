@@ -9,12 +9,28 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://embed.tawk.to https://vercel.live https://*.vercel-insights.com;
-              style-src 'self' 'unsafe-inline';
-              img-src 'self' blob: data: https:;
-              font-src 'self' data:;
-              connect-src 'self' https://*.vercel-insights.com https://vitals.vercel-insights.com https://*.vercel.app https://vercel.live https://www.googletagmanager.com https://analytics.google.com;
+              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.vercel-insights.com https://*.vercel.app https://vercel.live;
+              style-src 'self' 'unsafe-inline' https://vercel.live https://fonts.googleapis.com;
+              img-src 'self' blob: data: https: https://*.vercel-insights.com;
+              font-src 'self' data: https://fonts.gstatic.com;
+              connect-src 'self' 
+                https://*.vercel-insights.com 
+                https://vitals.vercel-insights.com 
+                https://*.vercel.app 
+                https://vercel.live 
+                https://www.googletagmanager.com 
+                https://analytics.google.com
+                https://*.googleapis.com
+                https://*.firebaseio.com
+                https://*.cloudfunctions.net
+                https://*.firebase.com
+                https://firestore.googleapis.com
+                wss://*.firebaseio.com
+                https://*.pusher.com
+                wss://*.pusher.com;
               frame-src 'self' https://vercel.live;
+              media-src 'self';
+              worker-src 'self' blob:;
             `.replace(/\s{2,}/g, ' ').trim()
           },
           {
