@@ -39,6 +39,19 @@ export async function middleware(request) {
     console.error('Error tracking visit:', error)
   }
 
+  // Add CSP headers
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://embed.tawk.to https://vercel.live https://*.vercel-insights.com;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data: https:;
+    font-src 'self' data:;
+    connect-src 'self' https://*.vercel-insights.com https://vitals.vercel-insights.com https://*.vercel.app https://vercel.live https://www.googletagmanager.com https://analytics.google.com;
+    frame-src 'self' https://vercel.live;
+  `.replace(/\s{2,}/g, ' ').trim()
+
+  response.headers.set('Content-Security-Policy', cspHeader)
+
   return response
 }
 

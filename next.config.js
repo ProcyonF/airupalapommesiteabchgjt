@@ -1,18 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-  images: {
-    domains: ['*'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-        port: '',
-        pathname: '**',
-      },
-    ],
-  },
   async headers() {
     return [
       {
@@ -20,7 +7,15 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://*.firebaseapp.com https://*.firebase.io wss://*.firebaseio.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+            value: `
+              default-src 'self';
+              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://embed.tawk.to https://vercel.live https://*.vercel-insights.com;
+              style-src 'self' 'unsafe-inline';
+              img-src 'self' blob: data: https:;
+              font-src 'self' data:;
+              connect-src 'self' https://*.vercel-insights.com https://vitals.vercel-insights.com https://*.vercel.app https://vercel.live https://www.googletagmanager.com https://analytics.google.com;
+              frame-src 'self' https://vercel.live;
+            `.replace(/\s{2,}/g, ' ').trim()
           },
           {
             key: 'X-DNS-Prefetch-Control',
@@ -39,12 +34,8 @@ const nextConfig = {
             value: 'nosniff'
           },
           {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block'
-          },
-          {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            value: 'origin-when-cross-origin'
           },
           {
             key: 'Permissions-Policy',
@@ -52,8 +43,12 @@ const nextConfig = {
           }
         ]
       }
-    ];
-  }
+    ]
+  },
+  images: {
+    domains: ['firebasestorage.googleapis.com', 'vercel.com'],
+  },
+  reactStrictMode: true,
 }
 
 module.exports = nextConfig
