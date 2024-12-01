@@ -7,7 +7,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://embed.tawk.to https://*.vercel-insights.com https://*.vercel.app https://vercel.live; font-src 'self' data: https://fonts.gstatic.com https://vercel.live"
+            value: "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://embed.tawk.to https://*.vercel-insights.com https://*.vercel.app https://vercel.live; font-src 'self' data: https://fonts.gstatic.com https://vercel.live"
           },
           {
             key: 'X-DNS-Prefetch-Control',
