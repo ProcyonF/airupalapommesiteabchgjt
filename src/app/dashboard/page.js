@@ -17,7 +17,8 @@ export default function Dashboard() {
     imageUrl: '',
     link: ''
   })
-  
+  const [isDarkMode, setIsDarkMode] = useState(false)
+
   const ADMIN_ID = "Mpr84ccCpsZyfzZ5AApyZFcHN7W2"
 
   useEffect(() => {
@@ -33,6 +34,14 @@ export default function Dashboard() {
 
     return () => unsubscribe()
   }, [])
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const loadProjects = async () => {
     try {
@@ -98,6 +107,10 @@ export default function Dashboard() {
       setError('Erreur lors de la suppression du projet')
     }
   }
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   if (loading) {
     return <div className="p-4 text-white">Chargement...</div>
@@ -262,6 +275,10 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+
+      <button onClick={toggleDarkMode} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+        Toggle Dark Mode
+      </button>
     </div>
   )
 }
