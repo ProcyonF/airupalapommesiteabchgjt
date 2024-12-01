@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { auth } from '../../firebase/config'
+import { db } from '../../firebase/config'
 import { onAuthStateChanged } from 'firebase/auth'
 import { getProjects, addProject, deleteProject } from '../../firebase/projects'
 
@@ -17,8 +18,7 @@ export default function Dashboard() {
     imageUrl: '',
     link: ''
   })
-  const [isDarkMode, setIsDarkMode] = useState(false)
-
+  
   const ADMIN_ID = "Mpr84ccCpsZyfzZ5AApyZFcHN7W2"
 
   useEffect(() => {
