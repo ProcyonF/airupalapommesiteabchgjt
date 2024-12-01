@@ -21,6 +21,8 @@ export default function Dashboard() {
   
   const ADMIN_ID = "Mpr84ccCpsZyfzZ5AApyZFcHN7W2"
 
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user)
@@ -34,6 +36,16 @@ export default function Dashboard() {
 
     return () => unsubscribe()
   }, [])
+
+  useEffect(() => {
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsDarkMode(darkModeMediaQuery.matches);
+    
+    const handleChange = (e) => setIsDarkMode(e.matches);
+    darkModeMediaQuery.addEventListener('change', handleChange);
+
+    return () => darkModeMediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   useEffect(() => {
     if (isDarkMode) {

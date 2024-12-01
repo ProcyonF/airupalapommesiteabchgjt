@@ -38,7 +38,7 @@ const nextConfig = {
     ]
   },
   images: {
-    domains: ['firebasestorage.googleapis.com', 'vercel.com'],
+    domains: ['firebasestorage.googleapis.com', 'vercel.com', '2csolution.com', 'example.com', 'anotherexample.com'],
   },
   reactStrictMode: true,
 }
