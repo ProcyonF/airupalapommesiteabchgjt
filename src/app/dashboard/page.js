@@ -121,14 +121,56 @@ export default function Dashboard() {
       <div className="bg-white/5 border border-white/10 rounded-lg p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4 text-white">Statistiques de visibilité</h2>
         {analytics ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white/5 border border-white/10 rounded p-4">
-              <h3 className="text-sm font-medium text-gray-400">Visites aujourd'hui</h3>
-              <p className="text-2xl font-bold text-white">{analytics.totalVisits}</p>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Aujourd'hui */}
+              <div className="bg-white/5 border border-white/10 rounded p-4">
+                <h3 className="text-sm font-medium text-gray-400">Aujourd'hui</h3>
+                <p className="text-2xl font-bold text-white">{analytics.today.totalVisits}</p>
+                <p className="text-sm text-gray-400 mt-1">
+                  {analytics.today.uniqueVisitors} visiteurs uniques
+                </p>
+              </div>
+
+              {/* Hier */}
+              <div className="bg-white/5 border border-white/10 rounded p-4">
+                <h3 className="text-sm font-medium text-gray-400">Hier</h3>
+                <p className="text-2xl font-bold text-white">{analytics.yesterday.totalVisits}</p>
+                <p className="text-sm text-gray-400 mt-1">
+                  {analytics.yesterday.uniqueVisitors} visiteurs uniques
+                </p>
+              </div>
+
+              {/* Cette semaine */}
+              <div className="bg-white/5 border border-white/10 rounded p-4">
+                <h3 className="text-sm font-medium text-gray-400">Cette semaine</h3>
+                <p className="text-2xl font-bold text-white">{analytics.weekly.totalVisits}</p>
+                <p className="text-sm text-gray-400 mt-1">
+                  {analytics.weekly.uniqueVisitors} visiteurs uniques
+                </p>
+              </div>
+
+              {/* Ce mois */}
+              <div className="bg-white/5 border border-white/10 rounded p-4">
+                <h3 className="text-sm font-medium text-gray-400">Ce mois</h3>
+                <p className="text-2xl font-bold text-white">{analytics.monthly.totalVisits}</p>
+                <p className="text-sm text-gray-400 mt-1">
+                  {analytics.monthly.uniqueVisitors} visiteurs uniques
+                </p>
+              </div>
             </div>
+
+            {/* Pages les plus visitées */}
             <div className="bg-white/5 border border-white/10 rounded p-4">
-              <h3 className="text-sm font-medium text-gray-400">Visiteurs uniques aujourd'hui</h3>
-              <p className="text-2xl font-bold text-white">{analytics.uniqueVisitors}</p>
+              <h3 className="text-sm font-medium text-gray-400 mb-3">Pages les plus visitées aujourd'hui</h3>
+              <div className="space-y-2">
+                {Object.entries(analytics.topPages).map(([page, views]) => (
+                  <div key={page} className="flex justify-between items-center">
+                    <span className="text-white">{page}</span>
+                    <span className="text-gray-400">{views} vues</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         ) : (
